@@ -1,4 +1,5 @@
 const express = require('express');
+const pug = require('pug');
 const multer = require('multer');
 const fs = require('fs');
 const upload = multer({
@@ -11,31 +12,20 @@ const uploaded_files = [];
 
 app.use(express.static('public'));
 app.use(express.static('./public/uploads/'));
+app.set('view engine', 'pug');
 
+app.get('/', function (req, res) {
+    const path = './public/uploads/';
+    fs.readdir(path, function (err, items) {
+    console.log(items);
+    res.render('index', { imgs: items })
+  })
+});
 app.get('/', (req, res) => {
     const path = './public/uploads/';
     fs.readdir(path, function (err, items) {
         console.log(items);
-        let html = `
-        <form action="http://localhost:3000/upload" method="post" enctype="multipart/form-data">
-        <h1>Welcome to NotInstaGram, Please Upload your pictures!!!</h1> 
-        <div>
-        <label for="file">Choose a File</label>
-        <!-- <input type="file" id="file" name="myFile"> -->
-        <input type="file" id="file" name="myFile">
-        <scirpt>
-            
-        </scirpt>
-        <!-- <input type="file" name="file" id="file" accept="image/*" multiple> -->
-        </div>
-     <div>
-       <button>Send the file</button>
-     </div>
-   </form>
-        `;
-        for (i = 0; i < items.length; i++) {
-            html += `<img src="${items[i]}">`;
-        }
+        
 
         res.send(html);
     });
