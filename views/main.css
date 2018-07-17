@@ -1,0 +1,27 @@
+img {
+    height: 300px;
+    width: 300px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+  
+}
+#image-container {
+    display: flex;
+    flex-direction: row;
+    
+    flex-wrap: wrap;
+    align-items: center;
+    
+}
+input {
+    color: red;
+    position: relative;
+    left: 400px;
+    margin: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+fieldset {
+    background-color: grey;
+}
