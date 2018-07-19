@@ -17,9 +17,7 @@ app.use(express.json());
 
 const upload = multer({dest: UPLOAD_DIR});
 
-app.post('/upload', upload.single('myFile'), function (req, res) {
-    res.render('success', { image: req.file });
-    });
+
 
 app.get('/', function(req, res) {
     const path = './public/uploads';
@@ -28,11 +26,25 @@ app.get('/', function(req, res) {
     });
 });
 
+app.get('/', (req, res) => {
+    fs.readdir(path, (err, items) => {
+        res.render('index', {title: 'Kenziegram', "images": items});
+    });
+});
+latestResponse = {
+    "images": [],
+    "timestamp": 0,
+};
+
+app.post('/upload', upload.single('myFile'), function (req, res) {
+    res.render('success', { image: req.file });
+    });
+    
 app.post('/latest', (req, res) => {
     fs.readdir(UPLOAD_DIR, (err, images) => {
         const newImages = [];
         let timestamp = req.body.after;
-
+        
         images.forEach(image => {
             const imagePath = path.join(UPLOAD_DIR, image);
             const modified = fs.statSync(imagePath).mtimeMs;
@@ -42,15 +54,15 @@ app.post('/latest', (req, res) => {
                     timestamp = modified
                 } 
                 newImages.push(image);
+                
             }
         });
-
-        res.send({
-            images: newImages,
-            timestamp
-        });
+        res.send(JSON.stringify(latestResponse));
+        latestResponse.images= [];
+      
     });
 });
+
 
 
 

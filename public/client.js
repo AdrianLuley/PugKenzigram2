@@ -1,6 +1,5 @@
 let after = Date.now();
-
-const imageContainer = document.getElementById("image-container");
+var errors = 0;
 
 function fetchImages() {
 
@@ -12,14 +11,33 @@ fetch("http://localhost:3000/latest", {
     body: JSON.stringify({ after })
     }).then (response => response.json())
     .then(data => {
-        after = data.timestamp;
-        data.images.forEach(image => {
-            const img = document.createElement("img");
-            img.src = `/uploads/${image}`;
-            imageContainer.prepend(img);
+
+        let imageContainer = document.getElementById('image-container')
+            data.latestImages.forEach((img) => {
+                let newImg = document.createElement('img');
+                newImg.src = img;
+                imageContainer.appendChild(newImg);
+            });
+            after = data.timestamp;
+            errors = 0;
+        })
+        .catch(response => {
+            if (!response.ok) {
+                errors++;
+                console.log("Connection Timeout");
+                if (errors == 2) {
+                    clearTimeout(startPoll);
+                    alert("Lost connection with server!");
+                }
+            }
+            
         });
-    });
+    }
 
-}
+    if(errors < 2) {
+    fetchImages();
+    };
 
-setInterval(fetchImages, 5000);
+
+startPoll = setInterval(fetchImages, 5000);
+console.log(fetchImages());

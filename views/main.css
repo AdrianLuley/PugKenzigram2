@@ -25,3 +25,7 @@ input {
 fieldset {
     background-color: grey;
 }
+a {
+    font-size: 20px;
+    border: 2px solid black;
+}
